@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Yahoo Wide';
+  src: url('./assets/NCLNeovibes-Demo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+} 
+@font-face {
+  font-family: 'Yahoo Wide Regular';
+  src: url('./assets/YSMusic-HeadlineBold.ttf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+} 
