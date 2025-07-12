@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import likeIcon from '../assets/like.png';
+import playlistsIcon from '../assets/playlists.png';
 import arrowIcon from '../assets/arrow.svg';
 
 export const Collection: React.FC = () => {
@@ -96,7 +97,31 @@ export const Collection: React.FC = () => {
                   <span style={subtitles} className="text-white text-2xl">Мне нравится</span>
                   <img src={arrowIcon} alt="Arrow" style={arrowStyle} />
                 </div>
-                <span className="text-gray-400 text-sm" style={{ marginTop: "-2px" }}>0 треков</span>
+                <span
+                  className="text-gray-400 text-sm"
+                  style={{
+                    marginTop: "-2px",
+                    fontFamily: "Yahoo Wide Regular, sans-serif",
+                    fontWeight: "bold"
+                  }}
+                >
+                  0 треков
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Playlists section with icon */}
+        <div className="flex items-start mt-2 mb-4">
+          <div className="flex flex-col">
+            <div className="flex items-center">
+              <img src={playlistsIcon} alt="Playlists" className="w-15 h-15 mr-3 ml-5 rounded-md" />
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <span style={subtitles} className="text-white text-2xl">Мои плейлисты</span>
+                  <img src={arrowIcon} alt="Arrow" style={arrowStyle} />
+                </div>
               </div>
             </div>
           </div>

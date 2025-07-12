@@ -7,15 +7,15 @@
         "fullscreen": false,
         "height": 800,
         "resizable": true,
-        "title": "Yahoo",
+        "title": "Yahoo!",
         "width": 1280,
         "minHeight": 700,
         "minWidth": 1100,
         "zoomHotkeysEnabled": false,
         "decorations": true,
         "trafficLightPosition": {
-          "x": 20.0,
-          "y": 20.0
+          "x": 15.0,
+          "y": 15.0
         }
       }
     ]
