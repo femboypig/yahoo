@@ -5,10 +5,25 @@
   src: url('./assets/NCLNeovibes-Demo.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
-} 
+}
+
 @font-face {
   font-family: 'Yahoo Wide Regular';
   src: url('./assets/YSMusic-HeadlineBold.ttf') format('opentype');
   font-weight: bold;
   font-style: normal;
-} 
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.animate-flip {
+  animation: flip 0.4s ease-in-out;
+}

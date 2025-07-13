@@ -3,6 +3,9 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import Collection from "./components/Collection";
 import Home from "./components/Home";
+import Library from "./components/Library";
+import LikesPage from "./components/LikesPage";
+import MyMusicPage from "./components/MyMusicPage";
 
 function App() {
   const [activePage, setActivePage] = useState('home');
@@ -31,7 +34,10 @@ function App() {
         >
           <div className="h-full overflow-hidden">
             {activePage === 'home' && <Home />}
-            {activePage === 'collection' && <Collection />}
+            {activePage === 'library' && <Library onPageChange={handlePageChange} />}
+            {activePage === 'collection' && <Collection onPageChange={handlePageChange} />}
+            {activePage === 'likes' && <LikesPage />}
+            {activePage === 'mymusic' && <MyMusicPage />}
           </div>
         </div>
 

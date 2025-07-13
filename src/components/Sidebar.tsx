@@ -4,6 +4,7 @@ import yahooVerticalLogo from '../assets/yahoo-v.svg';
 import noteIcon from '../assets/note.svg';
 import hearthIcon from '../assets/hearth.svg';
 import arrowIcon from '../assets/arrow.svg';
+import libIcon from '../assets/lib.svg';
 
 interface SidebarProps {
   activePage: string;
@@ -82,9 +83,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, onPageChange }) =>
             </span>
           </div>
 
+          {/* Library navigation item */}
+          <div
+            className={`flex items-center p-2 rounded cursor-pointer mt-2 ${collapsed ? 'justify-center' : 'ml-[5px]'} ${activePage === 'library' ? 'text-white' : 'text-gray-500'} hover:text-white transition-colors duration-300`}
+            onClick={() => onPageChange('library')}
+          >
+            <img
+              src={libIcon}
+              alt="Library"
+              className={`${collapsed ? 'h-6' : 'h-6 mr-3'} sidebar-content-transition`}
+              style={{
+                filter: activePage === 'library'
+                  ? 'brightness(0) invert(1)'
+                  : 'brightness(0) invert(0.5)'
+              }}
+            />
+            <span
+              className={`text-xl sidebar-content-transition ${collapsed ? 'opacity-0 absolute w-0 overflow-hidden' : 'opacity-100 w-auto'}`}
+              style={{ fontFamily: "Yahoo Wide Regular, sans-serif", transformOrigin: 'left center' }}
+            >
+              Библиотека
+            </span>
+          </div>
+
           {/* Collection navigation item */}
           <div
-            className={`flex items-center p-2 rounded cursor-pointer mt-2 ${collapsed ? 'justify-center' : ''} ${activePage === 'collection' ? 'text-white' : 'text-gray-500'} hover:text-white transition-colors duration-300`}
+            className={`flex items-center p-2 rounded cursor-pointer mt-2 ${collapsed ? 'justify-center' : 'ml-[5px]'} ${activePage === 'collection' ? 'text-white' : 'text-gray-500'} hover:text-white transition-colors duration-300`}
             onClick={() => onPageChange('collection')}
           >
             <img

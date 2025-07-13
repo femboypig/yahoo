@@ -2,9 +2,16 @@ import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import likeIcon from '../assets/like.png';
 import playlistsIcon from '../assets/playlists.png';
 import arrowIcon from '../assets/arrow.svg';
+import Button from './Button';
 
-export const Collection: React.FC = () => {
+interface CollectionProps {
+  onPageChange?: (page: string) => void;
+}
+
+export const Collection: React.FC<CollectionProps> = ({ onPageChange }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [likesHovered, setLikesHovered] = useState(false);
+  const [playlistsHovered, setPlaylistsHovered] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,6 +39,20 @@ export const Collection: React.FC = () => {
       }
     };
   }, []);
+
+  // Navigate to Library page
+  const navigateToLibrary = () => {
+    if (onPageChange) {
+      onPageChange('library');
+    }
+  };
+
+  // Navigate to Likes page
+  const navigateToLikes = () => {
+    if (onPageChange) {
+      onPageChange('likes');
+    }
+  };
 
   // Calculate styles based on scroll progress
   const titleContainerStyle: CSSProperties = {
@@ -71,6 +92,29 @@ export const Collection: React.FC = () => {
     height: '24px',
     marginLeft: '6px',
     filter: 'invert(0.6) brightness(0.8)', // This makes it grayish
+    transform: likesHovered ? 'translateX(3px)' : 'translateX(0)',
+    transition: 'transform 0.2s ease-in-out',
+  };
+
+  const playlistArrowStyle: CSSProperties = {
+    width: '24px',
+    height: '24px',
+    marginLeft: '6px',
+    filter: 'invert(0.6) brightness(0.8)', // This makes it grayish
+    transform: playlistsHovered ? 'translateX(3px)' : 'translateX(0)',
+    transition: 'transform 0.2s ease-in-out',
+  };
+
+  const hoverSectionStyle: CSSProperties = {
+    cursor: 'pointer',
+  };
+
+  const placeholderStyle: CSSProperties = {
+    borderRadius: '12px',
+    padding: '28px 20px',
+    marginTop: '16px',
+    marginLeft: '16px',
+    marginRight: '16px',
   };
 
   return (
@@ -90,7 +134,13 @@ export const Collection: React.FC = () => {
         {/* Like section with icon */}
         <div className="flex items-start mt-2 mb-4">
           <div className="flex flex-col">
-            <div className="flex items-center">
+            <div
+              className="flex items-center"
+              style={hoverSectionStyle}
+              onMouseEnter={() => setLikesHovered(true)}
+              onMouseLeave={() => setLikesHovered(false)}
+              onClick={navigateToLikes}
+            >
               <img src={likeIcon} alt="Like" className="w-15 h-15 mr-3 ml-5 rounded-md" />
               <div className="flex flex-col">
                 <div className="flex items-center">
@@ -112,24 +162,73 @@ export const Collection: React.FC = () => {
           </div>
         </div>
 
+        {/* Likes placeholder */}
+        <div style={placeholderStyle} className="flex flex-col items-center justify-center text-center">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+            </svg>
+          </div>
+          <h3
+            style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }}
+            className="text-white text-2xl font-bold mb-2"
+          >
+            Вам еще не нравятся композиции
+          </h3>
+          <p style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-gray-400 text-lg mb-3">
+            Отметьте понравившиеся треки, чтобы они появились здесь
+          </p>
+          <Button
+            onClick={navigateToLibrary}
+            className="mt-4"
+          >
+            Просмотреть библиотеку
+          </Button>
+        </div>
+
         {/* Playlists section with icon */}
         <div className="flex items-start mt-2 mb-4">
           <div className="flex flex-col">
-            <div className="flex items-center">
+            <div
+              className="flex items-center"
+              style={hoverSectionStyle}
+              onMouseEnter={() => setPlaylistsHovered(true)}
+              onMouseLeave={() => setPlaylistsHovered(false)}
+            >
               <img src={playlistsIcon} alt="Playlists" className="w-15 h-15 mr-3 ml-5 rounded-md" />
               <div className="flex flex-col">
                 <div className="flex items-center">
                   <span style={subtitles} className="text-white text-2xl">Мои плейлисты</span>
-                  <img src={arrowIcon} alt="Arrow" style={arrowStyle} />
+                  <img src={arrowIcon} alt="Arrow" style={playlistArrowStyle} />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main content area */}
-        <div className="pb-8">
-          {/* Your actual content will go here */}
+        {/* Playlists placeholder */}
+        <div style={placeholderStyle} className="flex flex-col items-center justify-center text-center">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
+            </svg>
+          </div>
+          <h3
+            style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }}
+            className="text-white text-2xl font-bold mb-2"
+          >
+            У вас пока нет плейлистов
+          </h3>
+          <p style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-gray-400 text-lg mb-3">
+            Создавайте плейлисты, чтобы они появились здесь
+          </p>
+          <Button variant="secondary" className="mt-4">
+            Создать плейлист
+          </Button>
         </div>
       </div>
     </div>
