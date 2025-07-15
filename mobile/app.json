@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "yahoo",
+    "slug": "yahoo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yahoo.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.yahoo.app"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "54ef80d7-4a4f-45b7-8df8-290c91e8d333"
+      }
+    }
+  }
+}

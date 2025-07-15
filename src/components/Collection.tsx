@@ -3,6 +3,8 @@ import likeIcon from '../assets/like.png';
 import playlistsIcon from '../assets/playlists.png';
 import arrowIcon from '../assets/arrow.svg';
 import Button from './Button';
+import TrackItem, { MusicMetadata } from './TrackItem';
+import { invoke } from '@tauri-apps/api/core';
 
 interface CollectionProps {
   onPageChange?: (page: string) => void;
@@ -13,6 +15,7 @@ export const Collection: React.FC<CollectionProps> = ({ onPageChange }) => {
   const [likesHovered, setLikesHovered] = useState(false);
   const [playlistsHovered, setPlaylistsHovered] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [likedTracks, setLikedTracks] = useState<MusicMetadata[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,6 +42,55 @@ export const Collection: React.FC<CollectionProps> = ({ onPageChange }) => {
       }
     };
   }, []);
+
+  // Fetch liked tracks on component mount
+  useEffect(() => {
+    loadLikedTracks();
+  }, []);
+
+  const loadLikedTracks = async () => {
+    try {
+      const music: MusicMetadata[] = await invoke('get_all_music');
+      const liked = music.filter(track => track.favorite);
+      setLikedTracks(liked);
+    } catch (error) {
+      console.error('Failed to load liked tracks:', error);
+    }
+  };
+
+  const handleDeleteMusic = async (id: string) => {
+    try {
+      await invoke('delete_music', { id });
+      setLikedTracks(prevList => prevList.filter(item => item.id !== id));
+    } catch (error) {
+      console.error('Failed to delete music:', error);
+    }
+  };
+
+  const handleToggleFavorite = async (id: string, isFavorite: boolean) => {
+    try {
+      await invoke('set_favorite', { id, favorite: isFavorite });
+      if (!isFavorite) {
+        // Remove from liked tracks if unfavorited
+        setLikedTracks(prevList => prevList.filter(item => item.id !== id));
+      } else {
+        // Update the track if it's already in the list
+        setLikedTracks(prevList => {
+          const track = prevList.find(item => item.id === id);
+          if (track) {
+            return prevList.map(item =>
+              item.id === id ? { ...item, favorite: isFavorite } : item
+            );
+          }
+          // Otherwise we'd need to fetch the track and add it
+          loadLikedTracks();
+          return prevList;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to update favorite status:', error);
+    }
+  };
 
   // Navigate to Library page
   const navigateToLibrary = () => {
@@ -117,6 +169,66 @@ export const Collection: React.FC<CollectionProps> = ({ onPageChange }) => {
     marginRight: '16px',
   };
 
+  // Render liked tracks with limitation
+  const renderLikedTracks = () => {
+    // Check if we're on mobile
+    const isMobile = window.innerWidth < 768; // Adjust breakpoint as needed
+    const maxItemsToShow = isMobile ? 3 : 6;
+
+    if (likedTracks.length <= 4) {
+      // Single column layout - show up to 3 tracks on mobile
+      const displayList = isMobile ? likedTracks.slice(0, maxItemsToShow) : likedTracks;
+
+      return (
+        <div className="flex flex-col space-y-2">
+          {displayList.map((track, index) => (
+            <TrackItem
+              key={track.id}
+              track={track}
+              index={index}
+              onDelete={handleDeleteMusic}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          ))}
+        </div>
+      );
+    } else {
+      // Two column layout - limit to 3 tracks per column (6 total)
+      const displayList = likedTracks.slice(0, maxItemsToShow);
+      const firstColumn = displayList.slice(0, Math.ceil(displayList.length / 2));
+      const secondColumn = displayList.slice(Math.ceil(displayList.length / 2));
+
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          {/* First column */}
+          <div className="flex flex-col space-y-2">
+            {firstColumn.map((track, index) => (
+              <TrackItem
+                key={track.id}
+                track={track}
+                index={index}
+                onDelete={handleDeleteMusic}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            ))}
+          </div>
+          {/* Second column */}
+          <div className="flex flex-col space-y-2">
+            {secondColumn.map((track, index) => (
+              <TrackItem
+                key={track.id}
+                track={track}
+                index={index + firstColumn.length}
+                onDelete={handleDeleteMusic}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+  };
+
   return (
     <div
       ref={contentRef}
@@ -155,38 +267,48 @@ export const Collection: React.FC<CollectionProps> = ({ onPageChange }) => {
                     fontWeight: "bold"
                   }}
                 >
-                  0 треков
+                  {likedTracks.length} {
+                    likedTracks.length === 1 ? 'трек' :
+                      likedTracks.length >= 2 && likedTracks.length <= 4 ? 'трека' :
+                        'треков'
+                  }
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Likes placeholder */}
-        <div style={placeholderStyle} className="flex flex-col items-center justify-center text-center">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-            </svg>
+        {/* Likes placeholder or tracks */}
+        {likedTracks.length === 0 ? (
+          <div style={placeholderStyle} className="flex flex-col items-center justify-center text-center">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+            </div>
+            <h3
+              style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }}
+              className="text-white text-2xl font-bold mb-2"
+            >
+              Вам еще не нравятся композиции
+            </h3>
+            <p style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-gray-400 text-lg mb-3">
+              Отметьте понравившиеся треки, чтобы они появились здесь
+            </p>
+            <Button
+              onClick={navigateToLibrary}
+              className="mt-4"
+            >
+              Просмотреть библиотеку
+            </Button>
           </div>
-          <h3
-            style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }}
-            className="text-white text-2xl font-bold mb-2"
-          >
-            Вам еще не нравятся композиции
-          </h3>
-          <p style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-gray-400 text-lg mb-3">
-            Отметьте понравившиеся треки, чтобы они появились здесь
-          </p>
-          <Button
-            onClick={navigateToLibrary}
-            className="mt-4"
-          >
-            Просмотреть библиотеку
-          </Button>
-        </div>
+        ) : (
+          <div className="px-4 mt-4 mb-8">
+            {renderLikedTracks()}
+          </div>
+        )}
 
         {/* Playlists section with icon */}
         <div className="flex items-start mt-2 mb-4">

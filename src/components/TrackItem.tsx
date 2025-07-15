@@ -118,6 +118,15 @@ const TrackItem: React.FC<TrackItemProps> = ({ track, index, onDelete, onToggleF
         return position;
     };
 
+    // Title and artist text style with truncation
+    const truncatedTextStyle: React.CSSProperties = {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: '100%',
+        fontFamily: "Yahoo Wide Regular, sans-serif"
+    };
+
     return (
         <div
             ref={trackItemRef}
@@ -126,7 +135,7 @@ const TrackItem: React.FC<TrackItemProps> = ({ track, index, onDelete, onToggleF
             onMouseLeave={() => setIsHovering(false)}
             style={{ backgroundColor: (isHovering || showContextMenu) ? 'rgba(42, 42, 42, 0.6)' : 'transparent' }}
         >
-            <div className="flex items-center">
+            <div className="flex items-center flex-grow min-w-0 mr-2">
                 {/* Album art */}
                 <div className="w-10 h-10 rounded-lg mr-4 overflow-hidden flex-shrink-0 bg-gray-800 flex items-center justify-center">
                     <img
@@ -138,12 +147,12 @@ const TrackItem: React.FC<TrackItemProps> = ({ track, index, onDelete, onToggleF
                         }}
                     />
                 </div>
-                <div>
-                    <h3 style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-white text-medium">{track.title}</h3>
-                    <p style={{ fontFamily: "Yahoo Wide Regular, sans-serif" }} className="text-gray-400 text-xs">{track.artist}</p>
+                <div className="min-w-0 flex-grow">
+                    <h3 style={truncatedTextStyle} className="text-white text-medium">{track.title}</h3>
+                    <p style={truncatedTextStyle} className="text-gray-400 text-xs">{track.artist}</p>
                 </div>
             </div>
-            <div className="flex items-center" >
+            <div className="flex items-center flex-shrink-0" >
                 {/* Heart icon for favorites */}
                 <button
                     onClick={(e) => {

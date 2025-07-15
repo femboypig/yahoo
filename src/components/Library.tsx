@@ -167,13 +167,18 @@ export const Library: React.FC<LibraryProps> = ({ onPageChange }) => {
             );
         }
 
+        // Check if we're on mobile
+        const isMobile = window.innerWidth < 768; // Adjust breakpoint as needed
+        const maxItemsToShow = isMobile ? 3 : 6;
+
         if (musicList.length <= 4) {
-            // Single column layout
+            // Single column layout - show up to 3 tracks on mobile
+            const displayList = isMobile ? musicList.slice(0, maxItemsToShow) : musicList;
+
             return (
                 <div className="mt-4 px-4">
-                    <h2 style={subtitles} className="text-white text-xl mb-3">Музыка</h2>
                     <div className="flex flex-col space-y-2">
-                        {musicList.map((track, index) => (
+                        {displayList.map((track, index) => (
                             <TrackItem
                                 key={track.id}
                                 track={track}
@@ -186,13 +191,13 @@ export const Library: React.FC<LibraryProps> = ({ onPageChange }) => {
                 </div>
             );
         } else {
-            // Two column layout
-            const firstColumn = musicList.slice(0, Math.ceil(musicList.length / 2));
-            const secondColumn = musicList.slice(Math.ceil(musicList.length / 2));
+            // Two column layout - limit to 3 tracks per column (6 total)
+            const displayList = musicList.slice(0, maxItemsToShow);
+            const firstColumn = displayList.slice(0, Math.ceil(displayList.length / 2));
+            const secondColumn = displayList.slice(Math.ceil(displayList.length / 2));
 
             return (
                 <div className="mt-4 px-4">
-                    <h2 style={subtitles} className="text-white text-xl mb-3">Музыка</h2>
                     <div className="grid grid-cols-2 gap-4">
                         {/* First column */}
                         <div className="flex flex-col space-y-2">

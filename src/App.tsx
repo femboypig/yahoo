@@ -23,10 +23,10 @@ function App() {
       <Sidebar onPageChange={handlePageChange} activePage={activePage} />
 
       {/* Main Content Area with fixed height */}
-      <main className="flex-1 p-3 pl-0 flex flex-col h-screen overflow-hidden">
+      <main style={{ zIndex: '1' }} className="flex-1 p-3 pl-0 flex flex-col h-screen overflow-hidden ">
         {/* Top container - fixed height with internal scrolling */}
         <div
-          className="border border-gray-800 rounded-xl flex-1 mb-3 overflow-hidden"
+          className="border border-gray-800 rounded-xl flex-1 mb-3 overflow-hidden "
           style={{
             backgroundColor: "rgba(255, 255, 255, 0.04)",
             height: "calc(100vh - 124px)" // Fixed height: viewport height minus padding and bottom container
@@ -46,7 +46,7 @@ function App() {
           {/* Bottom content can go here */}
         </div>
       </main>
-    </div>
+    </div >
   );
 }
 

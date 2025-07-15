@@ -120,6 +120,41 @@ export const MyMusicPage: React.FC = () => {
         return `rgb(${darkenedR}, ${darkenedG}, ${darkenedB})`;
     };
 
+    // Hide scrollbar styles but keep scrolling functionality
+    const scrollbarHideStyle = `
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    `;
+
+    const pageContainerStyle: CSSProperties = {
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.01)',
+        overflow: 'auto',
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE/Edge
+        zIndex: 1,
+    };
+
+    const gradientOverlayStyle: CSSProperties = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+
+        height: '300px',
+        background: `linear-gradient(to bottom, ${getDarkendColor(dominantColor, 0.5)} 0%, ${getDarkendColor(dominantColor, 0.3)} 50%, rgba(10, 10, 10, 0) 100%)`,
+        pointerEvents: 'none',
+        zIndex: 0,
+    };
+
+    const contentStyle: CSSProperties = {
+        position: 'relative',
+        zIndex: 2,
+    };
+
     const yellowButtonStyle: CSSProperties = {
         backgroundColor: '#FFD52E',
         color: 'black',
@@ -152,30 +187,6 @@ export const MyMusicPage: React.FC = () => {
         cursor: 'pointer',
         transition: 'background-color 0.2s ease',
         marginLeft: '10px'
-    };
-
-    const containerStyle: CSSProperties = {
-        position: 'relative',
-        height: '100%',
-        width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.01)',
-        overflow: 'hidden',
-    };
-
-    const gradientOverlayStyle: CSSProperties = {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '300px',
-        background: `linear-gradient(to bottom, ${getDarkendColor(dominantColor, 0.5)} 0%, ${getDarkendColor(dominantColor, 0.3)} 50%, rgba(10, 10, 10, 0) 100%)`,
-        pointerEvents: 'none',
-        zIndex: 1,
-    };
-
-    const contentStyle: CSSProperties = {
-        position: 'relative',
-        zIndex: 2,
     };
 
     const searchContainerStyle: CSSProperties = {
@@ -213,7 +224,10 @@ export const MyMusicPage: React.FC = () => {
     };
 
     return (
-        <div className="h-full overflow-y-auto custom-scrollbar" style={containerStyle}>
+        <div className="scrollbar-hide rounded-xl" style={pageContainerStyle}>
+            {/* Injecting CSS for hiding scrollbars */}
+            <style>{scrollbarHideStyle}</style>
+
             {/* Gradient overlay at the top based on dominant color */}
             <div style={gradientOverlayStyle}></div>
 
